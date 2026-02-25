@@ -34,6 +34,8 @@ const PROMPT_MODES: Record<string, string> = {
   'custom': '',
 };
 
+const MAX_INPUT_LENGTH = 15000;
+
 export async function generateFlashcards(
   text: string,
   mode: string = 'concept',
@@ -64,7 +66,7 @@ Return ONLY a valid JSON array with no markdown formatting. Each flashcard objec
 - "difficulty": number (1-5, where 1=very easy, 5=very hard)
 
 Study Material:
-${text.substring(0, 15000)}
+${text.substring(0, MAX_INPUT_LENGTH)}
 
 Return ONLY the JSON array, no other text.`;
 

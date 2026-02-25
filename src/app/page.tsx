@@ -74,7 +74,7 @@ export default function Dashboard() {
             className="border-4 border-black bg-white p-6 shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all text-center block"
           >
             <div className="text-4xl mb-2">📤</div>
-            <div className="text-xl font-black">UPLOAD &amp; GENERATE</div>
+            <div className="text-xl font-black">UPLOAD & GENERATE</div>
             <div className="text-sm font-medium mt-1">Turn documents into flashcards</div>
           </Link>
           <Link

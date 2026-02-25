@@ -145,7 +145,7 @@ export default function UploadPage() {
   return (
     <div className="space-y-6">
       <div className="border-4 border-black bg-blue-400 p-6 shadow-[8px_8px_0px_black]">
-        <h1 className="text-3xl font-black">📤 UPLOAD &amp; GENERATE</h1>
+        <h1 className="text-3xl font-black">📤 UPLOAD & GENERATE</h1>
         <p className="font-bold mt-1">Transform your documents into smart flashcards</p>
       </div>
 
@@ -239,7 +239,7 @@ export default function UploadPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black border-b-4 border-black pb-2">
-              3. PREVIEW &amp; EDIT ({generatedCards.length} cards)
+              3. PREVIEW & EDIT ({generatedCards.length} cards)
             </h2>
           </div>
 
