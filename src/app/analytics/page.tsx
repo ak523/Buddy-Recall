@@ -20,7 +20,7 @@ function generateLast52Weeks() {
   const weeks: string[][] = [];
   const today = new Date();
   const startDate = new Date(today);
-  startDate.setDate(today.getDate() - 363);
+  startDate.setDate(today.getDate() - 364);
 
   // Align to Sunday
   while (startDate.getDay() !== 0) {

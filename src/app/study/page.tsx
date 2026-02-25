@@ -98,7 +98,7 @@ function StudyContent() {
   }
 
   const card = cards[currentIndex];
-  const progress = ((currentIndex) / cards.length) * 100;
+  const progress = ((currentIndex + 1) / cards.length) * 100;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
