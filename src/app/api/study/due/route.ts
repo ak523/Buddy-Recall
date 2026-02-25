@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
       .innerJoin(decks, eq(flashcards.deckId, decks.id))
       .where(
         deckId
-          ? sql`${flashcards.deckId} = ${parseInt(deckId)} AND ${flashcards.dueDate} <= datetime('now')`
-          : sql`${flashcards.dueDate} <= datetime('now')`
+          ? sql`${flashcards.deckId} = ${parseInt(deckId)} AND ${flashcards.dueDate} <= strftime('%Y-%m-%dT%H:%M:%SZ', 'now')`
+          : sql`${flashcards.dueDate} <= strftime('%Y-%m-%dT%H:%M:%SZ', 'now')`
       );
 
     return NextResponse.json(dueCards);

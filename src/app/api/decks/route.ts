@@ -17,7 +17,7 @@ export async function GET() {
           .select({ count: sql<number>`count(*)` })
           .from(flashcards)
           .where(
-            sql`${flashcards.deckId} = ${deck.id} AND ${flashcards.dueDate} <= datetime('now')`
+            sql`${flashcards.deckId} = ${deck.id} AND ${flashcards.dueDate} <= strftime('%Y-%m-%dT%H:%M:%SZ', 'now')`
           );
         return {
           ...deck,

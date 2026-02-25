@@ -24,9 +24,8 @@ export async function POST(request: NextRequest) {
     );
 
     const totalReviews = (card.reviewCount || 0) + 1;
-    const successCount = rating >= 3
-      ? Math.round(((card.recallSuccessRate || 0) * (card.reviewCount || 0)) / 100) + 1
-      : Math.round(((card.recallSuccessRate || 0) * (card.reviewCount || 0)) / 100);
+    const currentSuccessCount = Math.round(((card.recallSuccessRate || 0) * (card.reviewCount || 0)) / 100);
+    const successCount = rating >= 3 ? currentSuccessCount + 1 : currentSuccessCount;
     const newSuccessRate = (successCount / totalReviews) * 100;
 
     await db
