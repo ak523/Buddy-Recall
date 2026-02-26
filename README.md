@@ -15,6 +15,12 @@ An AI-powered flashcard study app that transforms your documents into smart flas
   - **Custom** — provide your own prompt instructions
 - Preview and edit generated cards before saving
 
+### 📋 Manual Bulk Import
+- Paste delimited text to create flashcards instantly — no AI required
+- Supports **tab**, **comma**, **semicolon**, or a **custom delimiter**
+- Preview, edit, and delete individual parsed cards before saving
+- Save imported cards to a new or existing deck
+
 ### 📚 Deck Management
 - Create, browse, and delete decks
 - View cards per deck with due-card counts
@@ -45,7 +51,7 @@ An AI-powered flashcard study app that transforms your documents into smart flas
 - **Framework:** [Next.js](https://nextjs.org/) 16 (App Router)
 - **Language:** TypeScript
 - **Database:** SQLite via [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) with [Drizzle ORM](https://orm.drizzle.team/)
-- **AI:** [Google Gemini](https://ai.google.dev/) (gemini-1.5-flash)
+- **AI:** [Google Gemini](https://ai.google.dev/) (gemini-2.0-flash)
 - **Document Parsing:** [pdf-parse](https://www.npmjs.com/package/pdf-parse), [mammoth](https://www.npmjs.com/package/mammoth)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/) 4
 
@@ -114,6 +120,7 @@ src/
 ├── app/                  # Next.js App Router pages & API routes
 │   ├── page.tsx          # Dashboard
 │   ├── upload/           # Document upload & flashcard generation
+│   ├── import/           # Manual bulk import from delimited text
 │   ├── decks/            # Deck listing & detail views
 │   ├── study/            # Spaced repetition study session
 │   ├── analytics/        # Study analytics & heatmap
