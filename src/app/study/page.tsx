@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import MathText from '@/components/MathText';
 
 interface StudyCard {
   id: number;
@@ -125,7 +126,7 @@ function StudyContent() {
           {flipped ? '⬛ ANSWER' : '⬜ QUESTION'} · {card.cardType}
         </div>
         <div className="text-xl font-bold text-center">
-          {flipped ? card.back : card.front}
+          <MathText text={flipped ? card.back : card.front} />
         </div>
         {!flipped && (
           <div className="text-center mt-8 text-sm font-bold text-gray-400">
