@@ -64,14 +64,19 @@ export default function DecksPage() {
 
   async function renameDeck(id: number) {
     if (!editName.trim()) return;
-    const res = await fetch(`/api/decks/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: editName, description: editDesc }),
-    });
-    const updated = await res.json();
-    setDecks((prev) => prev.map((d) => (d.id === id ? { ...d, ...updated } : d)));
-    setEditingDeckId(null);
+    try {
+      const res = await fetch(`/api/decks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editName, description: editDesc }),
+      });
+      if (!res.ok) throw new Error('Failed to rename deck');
+      const updated = await res.json();
+      setDecks((prev) => prev.map((d) => (d.id === id ? { ...d, ...updated } : d)));
+      setEditingDeckId(null);
+    } catch {
+      alert('Failed to rename deck. Please try again.');
+    }
   }
 
   return (
@@ -211,6 +216,7 @@ export default function DecksPage() {
                     setEditDesc(deck.description || '');
                   }}
                   className="border-r-2 border-black px-4 py-2 text-sm font-black hover:bg-yellow-100 transition-colors"
+                  aria-label="Edit deck"
                 >
                   ✏️
                 </button>

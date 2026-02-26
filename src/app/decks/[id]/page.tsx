@@ -76,14 +76,19 @@ export default function DeckDetailPage() {
 
   async function saveDeckEdit() {
     if (!editDeckName.trim()) return;
-    const res = await fetch(`/api/decks/${deckId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: editDeckName, description: editDeckDesc }),
-    });
-    const updated = await res.json();
-    setDeck((prev) => prev ? { ...prev, ...updated } : prev);
-    setEditingDeck(false);
+    try {
+      const res = await fetch(`/api/decks/${deckId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editDeckName, description: editDeckDesc }),
+      });
+      if (!res.ok) throw new Error('Failed to rename deck');
+      const updated = await res.json();
+      setDeck((prev) => prev ? { ...prev, ...updated } : prev);
+      setEditingDeck(false);
+    } catch {
+      alert('Failed to rename deck. Please try again.');
+    }
   }
 
   async function startMovingCard(cardId: number) {
@@ -98,14 +103,17 @@ export default function DeckDetailPage() {
 
   async function moveCard(cardId: number) {
     if (!moveToDeckId || moveToDeckId === deckId) return;
-    const res = await fetch(`/api/cards/${cardId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ deckId: parseInt(moveToDeckId) }),
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/cards/${cardId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deckId: parseInt(moveToDeckId) }),
+      });
+      if (!res.ok) throw new Error('Failed to move card');
       setCards((prev) => prev.filter((c) => c.id !== cardId));
       setMovingCard(null);
+    } catch {
+      alert('Failed to move card. Please try again.');
     }
   }
 
