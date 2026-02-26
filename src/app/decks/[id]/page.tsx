@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import MathText from '@/components/MathText';
 
 interface Card {
   id: number;
@@ -75,7 +76,7 @@ export default function DeckDetailPage() {
       <div className="flex items-start gap-4">
         <div className="border-4 border-black bg-purple-400 p-6 shadow-[8px_8px_0px_black] flex-1">
           <h1 className="text-3xl font-black">{deck.name}</h1>
-          {deck.description && <p className="font-bold mt-1">{deck.description}</p>}
+          {deck.description && <p className="font-bold mt-1"><MathText text={deck.description} /></p>}
           <p className="text-sm font-bold mt-2">{cards.length} cards</p>
         </div>
         <div className="flex flex-col gap-2">
@@ -161,10 +162,10 @@ export default function DeckDetailPage() {
                           #{i + 1} · {card.cardType} · ⭐{card.difficulty}/5 ·{' '}
                           {card.reviewCount > 0 ? ` ${Math.round(card.recallSuccessRate)}% success` : ' Not reviewed'}
                         </div>
-                        <div className="font-bold">{card.front}</div>
+                        <div className="font-bold"><MathText text={card.front} /></div>
                         {expandedCard === card.id && (
                           <div className="mt-2 pt-2 border-t-2 border-dashed border-gray-300 text-sm text-gray-700">
-                            {card.back}
+                            <MathText text={card.back} />
                           </div>
                         )}
                       </div>

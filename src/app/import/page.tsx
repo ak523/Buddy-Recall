@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import MathText from '@/components/MathText';
 
 interface GeneratedCard {
   concept: string;
@@ -272,9 +273,9 @@ export default function ImportPage() {
                         <div className="text-xs font-bold text-gray-500 uppercase mb-1">
                           {card.card_type} · Difficulty {card.difficulty}/5
                         </div>
-                        <div className="font-bold">{card.front}</div>
+                        <div className="font-bold"><MathText text={card.front} /></div>
                         <div className="text-sm text-gray-700 mt-1 border-t-2 border-dashed border-gray-300 pt-1">
-                          {card.back}
+                          <MathText text={card.back} />
                         </div>
                       </div>
                       <div className="flex gap-1 flex-shrink-0">
