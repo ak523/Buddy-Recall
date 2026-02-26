@@ -34,6 +34,8 @@ const PROMPT_MODES: Record<string, string> = {
   'custom': '',
 };
 
+const MODEL_NAME = 'gemini-2.0-flash';
+
 const MAX_INPUT_LENGTH = 15000;
 
 export async function generateFlashcards(
@@ -47,7 +49,7 @@ export async function generateFlashcards(
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
   const modeInstruction = mode === 'custom' && customPrompt
     ? customPrompt
@@ -99,7 +101,7 @@ Return ONLY the JSON array, no other text.`;
 export async function testConnection(apiKey: string): Promise<boolean> {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
     await model.generateContent('Say "ok" in one word.');
     return true;
   } catch {
