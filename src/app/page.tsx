@@ -41,7 +41,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="border-4 border-black bg-yellow-400 p-6 shadow-[8px_8px_0px_black]">
         <h1 className="text-4xl font-black">BUDDY RECALL 🧠</h1>
-        <p className="text-lg font-bold mt-2">Your AI-powered study companion</p>
+        <p className="text-lg font-bold mt-2">Your spaced repetition study companion</p>
       </div>
 
       {/* Stats */}
@@ -70,12 +70,12 @@ export default function Dashboard() {
         <h2 className="text-2xl font-black mb-4 border-b-4 border-black pb-2">QUICK ACTIONS</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
-            href="/upload"
+            href="/import"
             className="border-4 border-black bg-white p-6 shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all text-center block"
           >
-            <div className="text-4xl mb-2">📤</div>
-            <div className="text-xl font-black">UPLOAD & GENERATE</div>
-            <div className="text-sm font-medium mt-1">Turn documents into flashcards</div>
+            <div className="text-4xl mb-2">📋</div>
+            <div className="text-xl font-black">IMPORT CARDS</div>
+            <div className="text-sm font-medium mt-1">Bulk import flashcards from text</div>
           </Link>
           <Link
             href="/study"
@@ -112,8 +112,8 @@ export default function Dashboard() {
           <div className="border-4 border-black border-dashed p-8 text-center">
             <p className="text-xl font-bold text-gray-500">No decks yet!</p>
             <p className="mt-2">
-              <Link href="/upload" className="text-blue-600 font-bold underline">
-                Upload your first document
+              <Link href="/import" className="text-blue-600 font-bold underline">
+                Import your first flashcards
               </Link>{' '}
               to get started.
             </p>
