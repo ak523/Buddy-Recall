@@ -28,7 +28,7 @@ function normalizeMathUnicode(text: string): string {
     .replace(/\u2211/g, '\\sum')   // ∑
     .replace(/\u220F/g, '\\prod')  // ∏
     .replace(/\u222B/g, '\\int')   // ∫
-    .replace(/\u221A/g, '\\sqrt')  // √
+    .replace(/\u221A/g, '\\surd')   // √ (standalone radical sign)
     .replace(/\u2192/g, '\\to')    // →
     .replace(/\u2190/g, '\\leftarrow'); // ←
 }
@@ -106,6 +106,7 @@ export default function MathText({ text, className }: MathTextProps) {
         }
         const displayMode = part.type === 'block';
         const html = renderKatex(part.content, displayMode);
+        // KaTeX.renderToString produces safe HTML output
         if (displayMode) {
           return (
             <span
