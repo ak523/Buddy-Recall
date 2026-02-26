@@ -120,7 +120,7 @@ function StudyContent() {
       {/* Card */}
       <div
         className="border-4 border-black bg-white shadow-[8px_8px_0px_black] min-h-64 p-8 cursor-pointer hover:shadow-[10px_10px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all"
-        onClick={() => !flipped && setFlipped(true)}
+        onClick={() => setFlipped((f) => !f)}
       >
         <div className="text-xs font-black text-gray-400 uppercase mb-4">
           {flipped ? '⬛ ANSWER' : '⬜ QUESTION'} · {card.cardType}
@@ -128,16 +128,20 @@ function StudyContent() {
         <div className="text-xl font-bold text-center">
           <MathText text={flipped ? card.back : card.front} />
         </div>
-        {!flipped && (
-          <div className="text-center mt-8 text-sm font-bold text-gray-400">
-            Click to reveal answer
-          </div>
-        )}
+        <div className="text-center mt-8 text-sm font-bold text-gray-400">
+          {flipped ? 'Click to hide answer' : 'Click to reveal answer'}
+        </div>
       </div>
 
-      {/* Rating Buttons */}
+      {/* Toggle & Rating Buttons */}
       {flipped ? (
         <div className="space-y-3">
+          <button
+            onClick={() => setFlipped(false)}
+            className="w-full border-4 border-black bg-yellow-400 py-4 font-black text-xl shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all"
+          >
+            HIDE ANSWER
+          </button>
           <p className="font-black text-center">HOW WELL DID YOU RECALL?</p>
           <div className="grid grid-cols-4 gap-3">
             {[
