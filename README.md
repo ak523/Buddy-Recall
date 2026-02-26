@@ -15,10 +15,21 @@ An AI-powered flashcard study app that transforms your documents into smart flas
   - **Custom** — provide your own prompt instructions
 - Preview and edit generated cards before saving
 
+### 📥 Manual Bulk Import
+- Paste delimited text (e.g. from a spreadsheet) to create flashcards in bulk
+- Supports **tab**, **comma**, **semicolon**, or **custom** delimiters
+- Preview, edit, and delete individual cards before saving
+- Save imported cards to a new or existing deck
+
 ### 📚 Deck Management
 - Create, browse, and delete decks
 - View cards per deck with due-card counts
 - Save generated flashcards to new or existing decks
+
+### 🔢 Math & LaTeX Rendering
+- Renders **LaTeX math** on flashcards using **KaTeX**
+- Supports inline math (`$...$`) and block math (`$$...$$`)
+- Automatic Unicode-to-LaTeX normalization for pasted content (e.g. `×` → `\times`, `π` → `\pi`)
 
 ### 🧠 Spaced Repetition Study Sessions
 - Study due cards with the **SM-2 algorithm** for optimal review scheduling
@@ -45,8 +56,9 @@ An AI-powered flashcard study app that transforms your documents into smart flas
 - **Framework:** [Next.js](https://nextjs.org/) 16 (App Router)
 - **Language:** TypeScript
 - **Database:** SQLite via [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) with [Drizzle ORM](https://orm.drizzle.team/)
-- **AI:** [Google Gemini](https://ai.google.dev/) (gemini-1.5-flash)
+- **AI:** [Google Gemini](https://ai.google.dev/) (gemini-2.0-flash)
 - **Document Parsing:** [pdf-parse](https://www.npmjs.com/package/pdf-parse), [mammoth](https://www.npmjs.com/package/mammoth)
+- **Math Rendering:** [KaTeX](https://katex.org/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/) 4
 
 ## Getting Started
@@ -114,6 +126,7 @@ src/
 ├── app/                  # Next.js App Router pages & API routes
 │   ├── page.tsx          # Dashboard
 │   ├── upload/           # Document upload & flashcard generation
+│   ├── import/           # Manual bulk import from delimited text
 │   ├── decks/            # Deck listing & detail views
 │   ├── study/            # Spaced repetition study session
 │   ├── analytics/        # Study analytics & heatmap
