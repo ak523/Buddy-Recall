@@ -19,6 +19,9 @@ export default function DecksPage() {
   const [newName, setNewName] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [creating, setCreating] = useState(false);
+  const [editingDeckId, setEditingDeckId] = useState<number | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editDesc, setEditDesc] = useState('');
 
   useEffect(() => {
     fetchDecks();
@@ -57,6 +60,23 @@ export default function DecksPage() {
     if (!confirm('Delete this deck and all its cards?')) return;
     await fetch(`/api/decks/${id}`, { method: 'DELETE' });
     setDecks((prev) => prev.filter((d) => d.id !== id));
+  }
+
+  async function renameDeck(id: number) {
+    if (!editName.trim()) return;
+    try {
+      const res = await fetch(`/api/decks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editName, description: editDesc }),
+      });
+      if (!res.ok) throw new Error('Failed to rename deck');
+      const updated = await res.json();
+      setDecks((prev) => prev.map((d) => (d.id === id ? { ...d, ...updated } : d)));
+      setEditingDeckId(null);
+    } catch {
+      alert('Failed to rename deck. Please try again.');
+    }
   }
 
   return (
@@ -119,8 +139,8 @@ export default function DecksPage() {
           <div className="text-6xl mb-4">📚</div>
           <p className="text-2xl font-black">NO DECKS YET</p>
           <p className="font-bold text-gray-600 mt-2">
-            <Link href="/upload" className="text-blue-600 underline">
-              Upload a document
+            <Link href="/import" className="text-blue-600 underline">
+              Import flashcards
             </Link>{' '}
             or create a deck above to get started.
           </p>
@@ -132,22 +152,56 @@ export default function DecksPage() {
               key={deck.id}
               className="border-4 border-black bg-white shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all"
             >
-              <Link href={`/decks/${deck.id}`} className="block p-5">
-                <h3 className="text-xl font-black">{deck.name}</h3>
-                {deck.description && (
-                  <p className="text-sm text-gray-600 mt-1">{deck.description}</p>
-                )}
-                <div className="mt-3 flex gap-2 flex-wrap">
-                  <span className="bg-blue-100 border-2 border-blue-400 px-2 py-1 text-xs font-bold">
-                    {deck.cardCount || 0} cards
-                  </span>
-                  {(deck.dueCount || 0) > 0 && (
-                    <span className="bg-red-100 border-2 border-red-400 px-2 py-1 text-xs font-bold">
-                      {deck.dueCount} due
-                    </span>
-                  )}
+              {editingDeckId === deck.id ? (
+                <div className="p-5 space-y-3">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full border-2 border-black p-2 font-black focus:outline-none"
+                    placeholder="Deck name"
+                    onKeyDown={(e) => e.key === 'Enter' && renameDeck(deck.id)}
+                  />
+                  <input
+                    type="text"
+                    value={editDesc}
+                    onChange={(e) => setEditDesc(e.target.value)}
+                    className="w-full border-2 border-black p-2 font-medium focus:outline-none"
+                    placeholder="Description (optional)"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => renameDeck(deck.id)}
+                      className="border-2 border-black bg-green-400 px-4 py-2 font-black text-sm hover:bg-green-300"
+                    >
+                      SAVE
+                    </button>
+                    <button
+                      onClick={() => setEditingDeckId(null)}
+                      className="border-2 border-black bg-white px-4 py-2 font-black text-sm hover:bg-gray-100"
+                    >
+                      CANCEL
+                    </button>
+                  </div>
                 </div>
-              </Link>
+              ) : (
+                <Link href={`/decks/${deck.id}`} className="block p-5">
+                  <h3 className="text-xl font-black">{deck.name}</h3>
+                  {deck.description && (
+                    <p className="text-sm text-gray-600 mt-1">{deck.description}</p>
+                  )}
+                  <div className="mt-3 flex gap-2 flex-wrap">
+                    <span className="bg-blue-100 border-2 border-blue-400 px-2 py-1 text-xs font-bold">
+                      {deck.cardCount || 0} cards
+                    </span>
+                    {(deck.dueCount || 0) > 0 && (
+                      <span className="bg-red-100 border-2 border-red-400 px-2 py-1 text-xs font-bold">
+                        {deck.dueCount} due
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              )}
               <div className="border-t-4 border-black flex">
                 <Link
                   href={`/study?deck=${deck.id}`}
@@ -155,6 +209,17 @@ export default function DecksPage() {
                 >
                   📖 STUDY
                 </Link>
+                <button
+                  onClick={() => {
+                    setEditingDeckId(deck.id);
+                    setEditName(deck.name);
+                    setEditDesc(deck.description || '');
+                  }}
+                  className="border-r-2 border-black px-4 py-2 text-sm font-black hover:bg-yellow-100 transition-colors"
+                  aria-label="Edit deck"
+                >
+                  ✏️
+                </button>
                 <button
                   onClick={() => deleteDeck(deck.id)}
                   className="px-4 py-2 text-sm font-black hover:bg-red-100 transition-colors text-red-700"

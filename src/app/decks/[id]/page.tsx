@@ -35,6 +35,12 @@ export default function DeckDetailPage() {
   const [editFront, setEditFront] = useState('');
   const [editBack, setEditBack] = useState('');
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [editingDeck, setEditingDeck] = useState(false);
+  const [editDeckName, setEditDeckName] = useState('');
+  const [editDeckDesc, setEditDeckDesc] = useState('');
+  const [allDecks, setAllDecks] = useState<Deck[]>([]);
+  const [movingCard, setMovingCard] = useState<number | null>(null);
+  const [moveToDeckId, setMoveToDeckId] = useState<string>('');
 
   useEffect(() => {
     async function load() {
@@ -68,6 +74,49 @@ export default function DeckDetailPage() {
     setEditingCard(null);
   }
 
+  async function saveDeckEdit() {
+    if (!editDeckName.trim()) return;
+    try {
+      const res = await fetch(`/api/decks/${deckId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editDeckName, description: editDeckDesc }),
+      });
+      if (!res.ok) throw new Error('Failed to rename deck');
+      const updated = await res.json();
+      setDeck((prev) => prev ? { ...prev, ...updated } : prev);
+      setEditingDeck(false);
+    } catch {
+      alert('Failed to rename deck. Please try again.');
+    }
+  }
+
+  async function startMovingCard(cardId: number) {
+    if (allDecks.length === 0) {
+      const res = await fetch('/api/decks');
+      const data = await res.json();
+      if (Array.isArray(data)) setAllDecks(data);
+    }
+    setMovingCard(cardId);
+    setMoveToDeckId('');
+  }
+
+  async function moveCard(cardId: number) {
+    if (!moveToDeckId || moveToDeckId === deckId) return;
+    try {
+      const res = await fetch(`/api/cards/${cardId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deckId: parseInt(moveToDeckId) }),
+      });
+      if (!res.ok) throw new Error('Failed to move card');
+      setCards((prev) => prev.filter((c) => c.id !== cardId));
+      setMovingCard(null);
+    } catch {
+      alert('Failed to move card. Please try again.');
+    }
+  }
+
   if (loading) return <div className="text-center py-12 font-black text-xl">Loading...</div>;
   if (!deck) return <div className="text-center py-12 font-black text-xl">Deck not found</div>;
 
@@ -75,9 +124,44 @@ export default function DeckDetailPage() {
     <div className="space-y-6">
       <div className="flex items-start gap-4">
         <div className="border-4 border-black bg-purple-400 p-6 shadow-[8px_8px_0px_black] flex-1">
-          <h1 className="text-3xl font-black">{deck.name}</h1>
-          {deck.description && <p className="font-bold mt-1"><MathText text={deck.description} /></p>}
-          <p className="text-sm font-bold mt-2">{cards.length} cards</p>
+          {editingDeck ? (
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={editDeckName}
+                onChange={(e) => setEditDeckName(e.target.value)}
+                className="w-full border-2 border-black p-2 font-black text-xl focus:outline-none"
+                placeholder="Deck name"
+              />
+              <input
+                type="text"
+                value={editDeckDesc}
+                onChange={(e) => setEditDeckDesc(e.target.value)}
+                className="w-full border-2 border-black p-2 font-medium focus:outline-none"
+                placeholder="Description (optional)"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={saveDeckEdit}
+                  className="border-2 border-black bg-green-400 px-4 py-2 font-black text-sm hover:bg-green-300"
+                >
+                  SAVE
+                </button>
+                <button
+                  onClick={() => setEditingDeck(false)}
+                  className="border-2 border-black bg-white px-4 py-2 font-black text-sm hover:bg-gray-100"
+                >
+                  CANCEL
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h1 className="text-3xl font-black">{deck.name}</h1>
+              {deck.description && <p className="font-bold mt-1"><MathText text={deck.description} /></p>}
+              <p className="text-sm font-bold mt-2">{cards.length} cards</p>
+            </>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <Link
@@ -87,11 +171,23 @@ export default function DeckDetailPage() {
             📖 STUDY
           </Link>
           <Link
-            href="/upload"
+            href="/import"
             className="border-4 border-black bg-blue-400 px-4 py-2 font-black text-sm shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all text-center"
           >
             + ADD CARDS
           </Link>
+          {!editingDeck && (
+            <button
+              onClick={() => {
+                setEditDeckName(deck.name);
+                setEditDeckDesc(deck.description || '');
+                setEditingDeck(true);
+              }}
+              className="border-4 border-black bg-white px-4 py-2 font-black text-sm shadow-[4px_4px_0px_black] hover:bg-yellow-100 transition-all text-center"
+            >
+              ✏️ RENAME
+            </button>
+          )}
           <button
             onClick={() => {
               if (confirm('Delete this deck and all its cards?')) {
@@ -110,8 +206,8 @@ export default function DeckDetailPage() {
       {cards.length === 0 ? (
         <div className="border-4 border-dashed border-black p-12 text-center">
           <p className="text-xl font-black">NO CARDS YET</p>
-          <Link href="/upload" className="text-blue-600 font-bold underline">
-            Add cards via Upload
+          <Link href="/import" className="text-blue-600 font-bold underline">
+            Add cards via Import
           </Link>
         </div>
       ) : (
@@ -150,6 +246,37 @@ export default function DeckDetailPage() {
                     </button>
                   </div>
                 </div>
+              ) : movingCard === card.id ? (
+                <div className="p-4 space-y-3">
+                  <label className="block font-black text-sm">MOVE TO DECK</label>
+                  <select
+                    value={moveToDeckId}
+                    onChange={(e) => setMoveToDeckId(e.target.value)}
+                    className="w-full border-2 border-black p-2 font-bold bg-white focus:outline-none"
+                  >
+                    <option value="">Select a deck...</option>
+                    {allDecks
+                      .filter((d) => String(d.id) !== deckId)
+                      .map((d) => (
+                        <option key={d.id} value={d.id}>{d.name}</option>
+                      ))}
+                  </select>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => moveCard(card.id)}
+                      disabled={!moveToDeckId}
+                      className="border-2 border-black bg-blue-400 px-4 py-2 font-black text-sm hover:bg-blue-300 disabled:opacity-50"
+                    >
+                      MOVE
+                    </button>
+                    <button
+                      onClick={() => setMovingCard(null)}
+                      className="border-2 border-black bg-white px-4 py-2 font-black text-sm hover:bg-gray-100"
+                    >
+                      CANCEL
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <div>
                   <div
@@ -182,6 +309,12 @@ export default function DeckDetailPage() {
                       className="border-r-2 border-black px-4 py-2 text-xs font-black hover:bg-yellow-100"
                     >
                       ✏️ EDIT
+                    </button>
+                    <button
+                      onClick={() => startMovingCard(card.id)}
+                      className="border-r-2 border-black px-4 py-2 text-xs font-black hover:bg-blue-100"
+                    >
+                      📦 MOVE
                     </button>
                     <button
                       onClick={() => deleteCard(card.id)}

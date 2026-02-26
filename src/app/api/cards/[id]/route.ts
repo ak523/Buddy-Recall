@@ -11,18 +11,21 @@ export async function PUT(
     const { id } = await params;
     const cardId = parseInt(id);
     const body = await request.json();
-    const { front, back, cardType, difficulty, visualReference } = body;
+    const { front, back, cardType, difficulty, visualReference, deckId } = body;
+
+    const updateData: Record<string, unknown> = {
+      updatedAt: new Date().toISOString(),
+    };
+    if (front !== undefined) updateData.front = front;
+    if (back !== undefined) updateData.back = back;
+    if (cardType !== undefined) updateData.cardType = cardType;
+    if (difficulty !== undefined) updateData.difficulty = difficulty;
+    if (visualReference !== undefined) updateData.visualReference = visualReference;
+    if (deckId !== undefined) updateData.deckId = deckId;
 
     const [updated] = await db
       .update(flashcards)
-      .set({
-        front,
-        back,
-        cardType,
-        difficulty,
-        visualReference,
-        updatedAt: new Date().toISOString(),
-      })
+      .set(updateData)
       .where(eq(flashcards.id, cardId))
       .returning();
 
