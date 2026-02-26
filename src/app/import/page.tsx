@@ -108,8 +108,10 @@ export default function ImportPage() {
     try {
       const decksRes = await fetch('/api/decks');
       const decksData = await decksRes.json();
-      if (Array.isArray(decksData)) setDecks(decksData);
-      if (decksData.length > 0) setSelectedDeckId(String(decksData[0].id));
+      if (Array.isArray(decksData)) {
+        setDecks(decksData);
+        if (decksData.length > 0) setSelectedDeckId(String(decksData[0].id));
+      }
     } catch {
       // Non-critical — user can still create a new deck
     }
@@ -128,17 +130,19 @@ export default function ImportPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name }),
         });
+        if (!res.ok) throw new Error('Failed to create deck');
         const deck = await res.json();
         deckId = deck.id;
       } else {
         deckId = parseInt(selectedDeckId);
       }
 
-      await fetch(`/api/decks/${deckId}/cards`, {
+      const saveRes = await fetch(`/api/decks/${deckId}/cards`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cards: generatedCards }),
       });
+      if (!saveRes.ok) throw new Error('Failed to save cards');
 
       router.push(`/decks/${deckId}`);
     } catch (e) {
