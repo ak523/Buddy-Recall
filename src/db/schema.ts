@@ -43,3 +43,22 @@ export const analyticsEvents = sqliteTable('analytics_events', {
   metadata: text('metadata'), // JSON string
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const quizAttempts = sqliteTable('quiz_attempts', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  deckId: integer('deck_id').notNull().references(() => decks.id, { onDelete: 'cascade' }),
+  totalQuestions: integer('total_questions').notNull(),
+  correctAnswers: integer('correct_answers').notNull(),
+  scorePercent: real('score_percent').notNull(),
+  timeTakenMs: integer('time_taken_ms'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const quizAnswers = sqliteTable('quiz_answers', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  attemptId: integer('attempt_id').notNull().references(() => quizAttempts.id, { onDelete: 'cascade' }),
+  cardId: integer('card_id').notNull().references(() => flashcards.id, { onDelete: 'cascade' }),
+  userAnswer: text('user_answer').notNull(),
+  correctAnswer: text('correct_answer').notNull(),
+  isCorrect: integer('is_correct', { mode: 'boolean' }).notNull(),
+});
