@@ -43,9 +43,14 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 const ANSWER_FEEDBACK_DELAY_MS = 900;
+const QUIZ_QUESTION_RATIO = 0.3;
 
 function buildQuestions(cards: QuizCard[]): QuizQuestion[] {
-  return shuffle(cards).map((card) => {
+  const shuffled = shuffle(cards);
+  const count = Math.max(4, Math.round(shuffled.length * QUIZ_QUESTION_RATIO));
+  const selected = shuffled.slice(0, count);
+
+  return selected.map((card) => {
     const distractors = shuffle(cards.filter((c) => c.id !== card.id))
       .slice(0, 3)
       .map((c) => c.back);
@@ -163,7 +168,7 @@ function QuizContent() {
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         {/* Score banner */}
-        <div className={`border-4 border-black p-8 shadow-[8px_8px_0px_black] text-center ${scorePercent >= 70 ? 'bg-green-400' : scorePercent >= 40 ? 'bg-yellow-400' : 'bg-red-400'}`}>
+        <div className={`border-4 border-black p-8 shadow-[8px_8px_0px_black] text-center ${scorePercent >= 70 ? 'bg-green-400' : scorePercent >= 40 ? 'bg-yellow-400' : 'bg-red-400'}`}> 
           <div className="text-5xl font-black">{scorePercent}%</div>
           <div className="text-xl font-black mt-2">{correctCount} / {questions.length} CORRECT</div>
           <div className="font-bold mt-1 text-sm">
@@ -181,7 +186,7 @@ function QuizContent() {
           </button>
           <Link
             href={`/study?deck=${deckId}`}
-            className="border-4 border-black bg-blue-400 px-6 py-3 font-black shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all"
+            className="border-4 border-black bg-blue-400 px-6 py-3 font-black shadow-[4px_4px_0px_black] hover:shadow-[4px_4px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all"
           >
             📖 STUDY DECK
           </Link>
@@ -198,7 +203,7 @@ function QuizContent() {
           <h2 className="text-xl font-black border-b-4 border-black pb-2 mb-3">QUESTION REVIEW</h2>
           <div className="space-y-3">
             {answers.map((a, i) => (
-              <div key={i} className={`border-4 border-black p-4 shadow-[3px_3px_0px_black] ${a.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+              <div key={i} className={`border-4 border-black p-4 shadow-[3px_3px_0px_black] ${a.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}> 
                 <div className="flex items-start gap-2">
                   <span className="text-lg">{a.isCorrect ? '✅' : '❌'}</span>
                   <div className="flex-1">
