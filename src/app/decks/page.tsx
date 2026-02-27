@@ -209,6 +209,12 @@ export default function DecksPage() {
                 >
                   📖 STUDY
                 </Link>
+                <Link
+                  href={`/quiz?deck=${deck.id}`}
+                  className="flex-1 border-r-2 border-black py-2 text-center text-sm font-black hover:bg-green-100 transition-colors"
+                >
+                  🧪 QUIZ
+                </Link>
                 <button
                   onClick={() => {
                     setEditingDeckId(deck.id);

@@ -171,6 +171,12 @@ export default function DeckDetailPage() {
             📖 STUDY
           </Link>
           <Link
+            href={`/quiz?deck=${deckId}`}
+            className="border-4 border-black bg-green-400 px-4 py-2 font-black text-sm shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all text-center"
+          >
+            🧪 QUIZ
+          </Link>
+          <Link
             href="/import"
             className="border-4 border-black bg-blue-400 px-4 py-2 font-black text-sm shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all text-center"
           >

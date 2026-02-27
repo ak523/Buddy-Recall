@@ -57,6 +57,25 @@ export function initializeDatabase() {
       metadata TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS quiz_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      deck_id INTEGER NOT NULL REFERENCES decks(id) ON DELETE CASCADE,
+      total_questions INTEGER NOT NULL,
+      correct_answers INTEGER NOT NULL,
+      score_percent REAL NOT NULL,
+      time_taken_ms INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS quiz_answers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      attempt_id INTEGER NOT NULL REFERENCES quiz_attempts(id) ON DELETE CASCADE,
+      card_id INTEGER NOT NULL REFERENCES flashcards(id) ON DELETE CASCADE,
+      user_answer TEXT NOT NULL,
+      correct_answer TEXT NOT NULL,
+      is_correct INTEGER NOT NULL
+    );
   `);
 }
 
