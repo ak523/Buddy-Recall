@@ -1,54 +1,72 @@
 # Buddy Recall 🧠
 
-An AI-powered flashcard study app that transforms your documents into smart flashcards and uses spaced repetition for optimal memory retention.
+A flashcard study app that uses spaced repetition for optimal memory retention, with quiz mode, a visual knowledge map, and detailed analytics.
 
 ## Features
 
-### 📤 Document Upload & AI Flashcard Generation
-- Upload **PDF**, **DOCX**, or **TXT** files via drag-and-drop or file picker
-- AI-powered flashcard generation using **Google Gemini** with multiple prompt modes:
-  - **Exam Mode** — key facts and definitions for exam prep
-  - **Concept Mastery** — deep understanding with explanations and examples
-  - **Speed Recall** — concise quick-fire cards
-  - **Visual Memory** — cards with visual reference cues
-  - **Language Learning** — pronunciation, usage, and context
-  - **Custom** — provide your own prompt instructions
-- Preview and edit generated cards before saving
+### 🏠 Dashboard
+- At-a-glance stats: total decks, total cards, cards due today, and study streak
+- Quick-action buttons to jump straight to Import, Study, or Decks
+- Recent decks grid with card counts and due-card badges
 
 ### 📥 Manual Bulk Import
 - Paste delimited text (e.g. from a spreadsheet) to create flashcards in bulk
 - Supports **tab**, **comma**, **semicolon**, or **custom** delimiters
-- Preview, edit, and delete individual cards before saving
+- **3-column format** support: `front | back | topic` — topics are auto-created on save
+- Preview, inline-edit, and delete individual cards before saving
+- Set difficulty and card type per card
 - Save imported cards to a new or existing deck
 
 ### 📚 Deck Management
-- Create, browse, and delete decks
+- Create, browse, rename, and delete decks
+- Inline deck editing (name and description)
 - View cards per deck with due-card counts
-- Save generated flashcards to new or existing decks
+- Quick-launch Study or Quiz from any deck card
+- **Deck detail view:**
+  - Expand / collapse cards to preview content
+  - Inline card editing (front, back, difficulty)
+  - Move cards between decks
+  - Per-card review stats (review count, recall success rate)
+  - Topic assignment indicator
+
+### 🧠 Spaced Repetition Study Sessions
+- Study due cards with the **SM-2 algorithm** for optimal review scheduling
+- Rate recall quality: **Again** / **Hard** / **Good** / **Easy**
+- Tracks response time per review
+- Filter by **deck** or **topic**
+- Progress bar and session completion summary
+
+### 🧪 Quiz Mode
+- Multiple-choice quizzes generated from deck cards (30% sample by default)
+- Four answer options per question (one correct + three distractors)
+- Immediate correct / incorrect feedback per question
+- Score summary with pass / fail result
+- **Quiz history** — view past attempts with scores and timestamps
+- Retake quiz with freshly shuffled questions
+
+### 🗺️ Knowledge Map
+- Visual, drag-and-drop topic organization powered by **@dnd-kit**
+- Create topics with custom colors
+- **Nested subtopics** for hierarchical knowledge structures
+- Drag cards between topic regions and an "Unassigned" area
+- Card strength indicators based on retention:
+  - 🟢 Strong (≥70%) · 🟡 Medium (40–70%) · 🔴 Weak (<40%) · ⚪ Unreviewed
+- Rename, delete, and add subtopics inline
+- Zoom controls (50%–200%)
 
 ### 🔢 Math & LaTeX Rendering
 - Renders **LaTeX math** on flashcards using **KaTeX**
 - Supports inline math (`$...$`) and block math (`$$...$$`)
 - Automatic Unicode-to-LaTeX normalization for pasted content (e.g. `×` → `\times`, `π` → `\pi`)
 
-### 🧠 Spaced Repetition Study Sessions
-- Study due cards with the **SM-2 algorithm** for optimal review scheduling
-- Rate recall quality (Again / Hard / Good / Easy) after each card
-- Tracks response time per review
-- Study all due cards or filter by deck
-
 ### 📊 Analytics Dashboard
-- **Study activity heatmap** showing reviews over the last 52 weeks
-- Per-deck performance stats: total cards, mastered cards, retention rate, and recent reviews
-- Summary metrics: total reviews, cards mastered, and average retention
-
-### ⚙️ Settings
-- Configure your **Google Gemini API key** via the settings page or the `GEMINI_API_KEY` environment variable
-- Test API connection from the UI
+- **52-week study activity heatmap** (GitHub-style contribution graph)
+- Summary metrics: total reviews, cards mastered, and average retention rate
+- Per-deck performance stats: total cards, mastered count, recent reviews, and average success rate with visual progress bars
 
 ### 💾 Local-First Architecture
 - Data stored locally in **SQLite** (via better-sqlite3 + Drizzle ORM)
-- Only AI flashcard generation requires an internet connection
+- No internet connection required — everything runs offline
 - Database auto-initializes on first run
 
 ## Tech Stack
@@ -56,9 +74,8 @@ An AI-powered flashcard study app that transforms your documents into smart flas
 - **Framework:** [Next.js](https://nextjs.org/) 16 (App Router)
 - **Language:** TypeScript
 - **Database:** SQLite via [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) with [Drizzle ORM](https://orm.drizzle.team/)
-- **AI:** [Google Gemini](https://ai.google.dev/) (gemini-2.0-flash)
-- **Document Parsing:** [pdf-parse](https://www.npmjs.com/package/pdf-parse), [mammoth](https://www.npmjs.com/package/mammoth)
 - **Math Rendering:** [KaTeX](https://katex.org/)
+- **Drag & Drop:** [@dnd-kit](https://dndkit.com/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/) 4
 
 ## Getting Started
@@ -66,7 +83,6 @@ An AI-powered flashcard study app that transforms your documents into smart flas
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or later)
-- A **Google Gemini API key** — get one free at [Google AI Studio](https://aistudio.google.com/)
 
 ### Installation
 
@@ -82,16 +98,6 @@ An AI-powered flashcard study app that transforms your documents into smart flas
    ```bash
    npm install
    ```
-
-3. **Configure your Gemini API key** (choose one option):
-
-   - **Option A — Environment variable:**
-
-     ```bash
-     export GEMINI_API_KEY=your_api_key_here
-     ```
-
-   - **Option B — Settings page:** Start the app and navigate to the **Settings** page to enter your key through the UI.
 
 ### Running the App
 
@@ -125,16 +131,16 @@ npm run start
 src/
 ├── app/                  # Next.js App Router pages & API routes
 │   ├── page.tsx          # Dashboard
-│   ├── upload/           # Document upload & flashcard generation
 │   ├── import/           # Manual bulk import from delimited text
 │   ├── decks/            # Deck listing & detail views
 │   ├── study/            # Spaced repetition study session
+│   ├── quiz/             # Multiple-choice quiz mode
+│   ├── map/              # Knowledge map with drag-and-drop topics
 │   ├── analytics/        # Study analytics & heatmap
-│   ├── settings/         # API key configuration
 │   └── api/              # Backend API routes
-├── components/           # Shared UI components
+├── components/           # Shared UI components (Navbar, MathText)
 ├── db/                   # Database schema & initialization
-└── lib/                  # Utilities (Gemini AI, SM-2 algorithm, document parser)
+└── lib/                  # Utilities (SM-2 algorithm)
 ```
 
 ## License
