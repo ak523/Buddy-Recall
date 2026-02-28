@@ -44,6 +44,7 @@ export async function POST(
           card_type?: string;
           visual_reference?: string | null;
           difficulty?: number;
+          topic_id?: number | null;
         }) => ({
           deckId,
           front: card.front,
@@ -51,6 +52,7 @@ export async function POST(
           cardType: card.card_type || 'definition',
           visualReference: card.visual_reference || null,
           difficulty: card.difficulty || 3,
+          topicId: card.topic_id ?? null,
           dueDate: new Date().toISOString(),
         }))
       )

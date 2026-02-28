@@ -8,6 +8,7 @@ const navItems = [
   { href: '/import', label: 'Import', icon: '📋' },
   { href: '/decks', label: 'Decks', icon: '📚' },
   { href: '/study', label: 'Study', icon: '🧠' },
+  { href: '/map', label: 'Map', icon: '🗺️' },
   { href: '/analytics', label: 'Analytics', icon: '📊' },
 ];
 
@@ -28,7 +29,7 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={`px-3 py-2 font-bold border-2 border-transparent transition-all text-sm ${
-                  pathname === item.href
+                  pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
                     ? 'bg-yellow-400 border-black shadow-[2px_2px_0px_black]'
                     : 'hover:bg-yellow-100 hover:border-black hover:shadow-[2px_2px_0px_black]'
                 }`}

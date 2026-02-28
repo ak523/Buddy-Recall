@@ -9,9 +9,19 @@ export const decks = sqliteTable('decks', {
   updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const topics = sqliteTable('topics', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  deckId: integer('deck_id').notNull().references(() => decks.id, { onDelete: 'cascade' }),
+  parentId: integer('parent_id'),
+  name: text('name').notNull(),
+  color: text('color').default('#e2e8f0'),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const flashcards = sqliteTable('flashcards', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   deckId: integer('deck_id').notNull().references(() => decks.id, { onDelete: 'cascade' }),
+  topicId: integer('topic_id'),
   front: text('front').notNull(),
   back: text('back').notNull(),
   cardType: text('card_type').default('definition'),

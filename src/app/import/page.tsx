@@ -11,6 +11,7 @@ interface GeneratedCard {
   back: string;
   visual_reference: string | null;
   difficulty: number;
+  topic?: string;
 }
 
 interface Deck {
@@ -25,9 +26,9 @@ const DELIMITERS = [
   { id: 'custom', label: 'Custom', char: '' },
 ];
 
-const PLACEHOLDER_TEXT = `What is photosynthesis?\tThe process by which plants convert sunlight into energy
-What is mitosis?\tA type of cell division resulting in two identical daughter cells
-What is the speed of light?\t299,792,458 meters per second`;
+const PLACEHOLDER_TEXT = `What is photosynthesis?\tThe process by which plants convert sunlight into energy\tBiology
+What is mitosis?\tA type of cell division resulting in two identical daughter cells\tBiology
+What is the speed of light?\t299,792,458 meters per second\tPhysics`;
 
 export default function ImportPage() {
   const router = useRouter();
@@ -75,7 +76,8 @@ export default function ImportPage() {
         return;
       }
       const front = parts[0].trim();
-      const back = parts.slice(1).join(delimiter).trim();
+      const back = parts[1].trim();
+      const topic = parts.length >= 3 ? parts[2].trim() : undefined;
       if (!front || !back) {
         errors.push(`Line ${index + 1}: Empty front or back — skipped`);
         return;
@@ -87,6 +89,7 @@ export default function ImportPage() {
         back,
         visual_reference: null,
         difficulty: 3,
+        topic: topic || undefined,
       });
     });
 
@@ -138,10 +141,30 @@ export default function ImportPage() {
         deckId = parseInt(selectedDeckId);
       }
 
+      // Auto-create topics from card topic names
+      const topicNames = [...new Set(generatedCards.map((c) => c.topic).filter(Boolean))] as string[];
+      const topicMap: Record<string, number> = {};
+      for (const name of topicNames) {
+        const res = await fetch('/api/topics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deckId, name }),
+        });
+        if (res.ok) {
+          const topic = await res.json();
+          topicMap[name] = topic.id;
+        }
+      }
+
+      const cardsWithTopics = generatedCards.map((card) => ({
+        ...card,
+        topic_id: card.topic ? topicMap[card.topic] || null : null,
+      }));
+
       const saveRes = await fetch(`/api/decks/${deckId}/cards`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cards: generatedCards }),
+        body: JSON.stringify({ cards: cardsWithTopics }),
       });
       if (!saveRes.ok) throw new Error('Failed to save cards');
 
@@ -182,7 +205,7 @@ export default function ImportPage() {
       <div className="space-y-4">
         <h2 className="text-xl font-black border-b-4 border-black pb-2">1. PASTE YOUR TEXT</h2>
         <p className="font-medium text-gray-700 text-sm">
-          Each line should contain a <strong>front</strong> (question) and <strong>back</strong> (answer) separated by a delimiter.
+          Each line should contain a <strong>front</strong> (question) and <strong>back</strong> (answer) separated by a delimiter. An optional third column assigns a <strong>topic</strong>.
         </p>
         <textarea
           value={rawText}
@@ -271,7 +294,7 @@ export default function ImportPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
                         <div className="text-xs font-bold text-gray-500 uppercase mb-1">
-                          {card.card_type} · Difficulty {card.difficulty}/5
+                          {card.card_type} · Difficulty {card.difficulty}/5{card.topic ? ` · 📁 ${card.topic}` : ''}
                         </div>
                         <div className="font-bold"><MathText text={card.front} /></div>
                         <div className="text-sm text-gray-700 mt-1 border-t-2 border-dashed border-gray-300 pt-1">

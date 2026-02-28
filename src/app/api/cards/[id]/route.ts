@@ -11,7 +11,7 @@ export async function PUT(
     const { id } = await params;
     const cardId = parseInt(id);
     const body = await request.json();
-    const { front, back, cardType, difficulty, visualReference, deckId } = body;
+    const { front, back, cardType, difficulty, visualReference, deckId, topicId } = body;
 
     const updateData: Record<string, unknown> = {
       updatedAt: new Date().toISOString(),
@@ -22,6 +22,7 @@ export async function PUT(
     if (difficulty !== undefined) updateData.difficulty = difficulty;
     if (visualReference !== undefined) updateData.visualReference = visualReference;
     if (deckId !== undefined) updateData.deckId = deckId;
+    if (topicId !== undefined) updateData.topicId = topicId;
 
     const [updated] = await db
       .update(flashcards)

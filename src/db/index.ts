@@ -23,9 +23,19 @@ export function initializeDatabase() {
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS topics (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      deck_id INTEGER NOT NULL REFERENCES decks(id) ON DELETE CASCADE,
+      parent_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      color TEXT DEFAULT '#e2e8f0',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE TABLE IF NOT EXISTS flashcards (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       deck_id INTEGER NOT NULL REFERENCES decks(id) ON DELETE CASCADE,
+      topic_id INTEGER REFERENCES topics(id) ON DELETE SET NULL,
       front TEXT NOT NULL,
       back TEXT NOT NULL,
       card_type TEXT DEFAULT 'definition',
@@ -77,6 +87,12 @@ export function initializeDatabase() {
       is_correct INTEGER NOT NULL
     );
   `);
+
+  // Migration: add topic_id column to existing flashcards table if missing
+  const cols = sqlite.prepare("PRAGMA table_info(flashcards)").all() as { name: string }[];
+  if (!cols.some((c) => c.name === 'topic_id')) {
+    sqlite.exec('ALTER TABLE flashcards ADD COLUMN topic_id INTEGER REFERENCES topics(id) ON DELETE SET NULL');
+  }
 }
 
 initializeDatabase();
