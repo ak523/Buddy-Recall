@@ -17,6 +17,7 @@ interface StudyCard {
 function StudyContent() {
   const searchParams = useSearchParams();
   const deckId = searchParams.get('deck');
+  const topicId = searchParams.get('topic');
 
   const [cards, setCards] = useState<StudyCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,7 +29,10 @@ function StudyContent() {
 
   useEffect(() => {
     async function fetchDue() {
-      const url = deckId ? `/api/study/due?deck_id=${deckId}` : '/api/study/due';
+      const params = new URLSearchParams();
+      if (deckId) params.set('deck_id', deckId);
+      if (topicId) params.set('topic_id', topicId);
+      const url = `/api/study/due${params.toString() ? '?' + params.toString() : ''}`;
       const res = await fetch(url);
       const data = await res.json();
       if (Array.isArray(data)) setCards(data);
@@ -36,7 +40,7 @@ function StudyContent() {
       setStartTime(Date.now());
     }
     fetchDue();
-  }, [deckId]);
+  }, [deckId, topicId]);
 
   const handleRating = useCallback(async (rating: number) => {
     if (submitting || !cards[currentIndex]) return;
