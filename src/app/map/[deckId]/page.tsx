@@ -73,7 +73,6 @@ function DraggableCard({ card }: { card: Card }) {
 // --- Droppable Topic Region ---
 function TopicRegion({
   topic,
-  children,
   cards,
   allTopics,
   onAddSubTopic,
@@ -81,7 +80,6 @@ function TopicRegion({
   onRenameTopic,
 }: {
   topic: Topic;
-  children: React.ReactNode;
   cards: Card[];
   allTopics: Topic[];
   onAddSubTopic: (parentId: number) => void;
@@ -168,9 +166,7 @@ function TopicRegion({
               onAddSubTopic={onAddSubTopic}
               onDeleteTopic={onDeleteTopic}
               onRenameTopic={onRenameTopic}
-            >
-              {null}
-            </TopicRegion>
+            />
           ))}
         </div>
       )}
@@ -178,8 +174,6 @@ function TopicRegion({
       {topicCards.length === 0 && subTopics.length === 0 && (
         <p className="text-xs text-gray-400 italic">Drop cards here</p>
       )}
-
-      {children}
     </div>
   );
 }
@@ -414,9 +408,7 @@ export default function DeckMapPage() {
                     onAddSubTopic={handleAddTopic}
                     onDeleteTopic={handleDeleteTopic}
                     onRenameTopic={handleRenameTopic}
-                  >
-                    {null}
-                  </TopicRegion>
+                  />
                 ))}
               </div>
             )}
