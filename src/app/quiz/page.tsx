@@ -9,6 +9,7 @@ interface QuizCard {
   id: number;
   front: string;
   back: string;
+  analogy: string | null;
 }
 
 interface QuizQuestion {
@@ -24,6 +25,7 @@ interface AnswerRecord {
   correctAnswer: string;
   isCorrect: boolean;
   options: string[];
+  analogy: string | null;
 }
 
 interface QuizAttempt {
@@ -112,6 +114,7 @@ function QuizContent() {
       correctAnswer: q.correctAnswer,
       isCorrect,
       options: q.options,
+      analogy: q.card.analogy,
     };
     const newAnswers = [...answers, record];
 
@@ -229,7 +232,12 @@ function QuizContent() {
                           </div>  
                         );  
                       })}  
-                    </div>  
+                    </div>
+                    {a.analogy && (
+                      <div className="mt-2 bg-amber-50 border-2 border-amber-300 rounded px-3 py-2 text-sm text-amber-900">
+                        💡 <strong>Analogy:</strong> <MathText text={a.analogy} />
+                      </div>
+                    )}
                   </div>  
                 </div>  
               </div>  

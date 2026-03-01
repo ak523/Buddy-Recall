@@ -12,6 +12,7 @@ interface GeneratedCard {
   visual_reference: string | null;
   difficulty: number;
   topic?: string;
+  analogy?: string;
 }
 
 interface Deck {
@@ -26,7 +27,7 @@ const DELIMITERS = [
   { id: 'custom', label: 'Custom', char: '' },
 ];
 
-const PLACEHOLDER_TEXT = `What is photosynthesis?\tThe process by which plants convert sunlight into energy\tBiology
+const PLACEHOLDER_TEXT = `What is photosynthesis?\tThe process by which plants convert sunlight into energy\tBiology\tIt's like a solar panel for plants
 What is mitosis?\tA type of cell division resulting in two identical daughter cells\tBiology
 What is the speed of light?\t299,792,458 meters per second\tPhysics`;
 
@@ -78,6 +79,7 @@ export default function ImportPage() {
       const front = parts[0].trim();
       const back = parts[1].trim();
       const topic = parts.length >= 3 ? parts[2].trim() : undefined;
+      const analogy = parts.length >= 4 ? parts[3].trim() : undefined;
       if (!front || !back) {
         errors.push(`Line ${index + 1}: Empty front or back — skipped`);
         return;
@@ -90,6 +92,7 @@ export default function ImportPage() {
         visual_reference: null,
         difficulty: 3,
         topic: topic || undefined,
+        analogy: analogy || undefined,
       });
     });
 
@@ -159,6 +162,7 @@ export default function ImportPage() {
       const cardsWithTopics = generatedCards.map((card) => ({
         ...card,
         topic_id: card.topic ? topicMap[card.topic] || null : null,
+        analogy: card.analogy || null,
       }));
 
       const saveRes = await fetch(`/api/decks/${deckId}/cards`, {
@@ -205,7 +209,7 @@ export default function ImportPage() {
       <div className="space-y-4">
         <h2 className="text-xl font-black border-b-4 border-black pb-2">1. PASTE YOUR TEXT</h2>
         <p className="font-medium text-gray-700 text-sm">
-          Each line should contain a <strong>front</strong> (question) and <strong>back</strong> (answer) separated by a delimiter. An optional third column assigns a <strong>topic</strong>.
+          Each line should contain a <strong>front</strong> (question) and <strong>back</strong> (answer) separated by a delimiter. An optional third column assigns a <strong>topic</strong>, and an optional fourth column adds an <strong>analogy</strong>.
         </p>
         <textarea
           value={rawText}
@@ -282,6 +286,13 @@ export default function ImportPage() {
                       rows={3}
                       placeholder="Back"
                     />
+                    <textarea
+                      value={card.analogy || ''}
+                      onChange={(e) => updateCard(i, 'analogy', e.target.value)}
+                      className="w-full border-2 border-black p-2 font-medium text-sm resize-none focus:outline-none"
+                      rows={2}
+                      placeholder="Analogy (optional)"
+                    />
                     <button
                       onClick={() => setEditingCard(null)}
                       className="border-2 border-black bg-yellow-400 px-3 py-1 text-sm font-bold hover:bg-yellow-300"
@@ -300,6 +311,11 @@ export default function ImportPage() {
                         <div className="text-sm text-gray-700 mt-1 border-t-2 border-dashed border-gray-300 pt-1">
                           <MathText text={card.back} />
                         </div>
+                        {card.analogy && (
+                          <div className="mt-1 bg-amber-50 border-2 border-amber-300 rounded px-2 py-1 text-sm text-amber-900">
+                            💡 <strong>Analogy:</strong> <MathText text={card.analogy} />
+                          </div>
+                        )}
                       </div>
                       <div className="flex gap-1 flex-shrink-0">
                         <button

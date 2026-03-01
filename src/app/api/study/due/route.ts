@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
         deckId: flashcards.deckId,
         front: flashcards.front,
         back: flashcards.back,
+        analogy: flashcards.analogy,
         cardType: flashcards.cardType,
         difficulty: flashcards.difficulty,
         interval: flashcards.interval,

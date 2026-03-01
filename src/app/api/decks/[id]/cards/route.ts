@@ -45,10 +45,12 @@ export async function POST(
           visual_reference?: string | null;
           difficulty?: number;
           topic_id?: number | null;
+          analogy?: string | null;
         }) => ({
           deckId,
           front: card.front,
           back: card.back,
+          analogy: card.analogy || null,
           cardType: card.card_type || 'definition',
           visualReference: card.visual_reference || null,
           difficulty: card.difficulty || 3,

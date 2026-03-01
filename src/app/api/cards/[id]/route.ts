@@ -11,13 +11,14 @@ export async function PUT(
     const { id } = await params;
     const cardId = parseInt(id);
     const body = await request.json();
-    const { front, back, cardType, difficulty, visualReference, deckId, topicId } = body;
+    const { front, back, cardType, difficulty, visualReference, deckId, topicId, analogy } = body;
 
     const updateData: Record<string, unknown> = {
       updatedAt: new Date().toISOString(),
     };
     if (front !== undefined) updateData.front = front;
     if (back !== undefined) updateData.back = back;
+    if (analogy !== undefined) updateData.analogy = analogy;
     if (cardType !== undefined) updateData.cardType = cardType;
     if (difficulty !== undefined) updateData.difficulty = difficulty;
     if (visualReference !== undefined) updateData.visualReference = visualReference;

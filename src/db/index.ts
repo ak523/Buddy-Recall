@@ -38,6 +38,7 @@ export function initializeDatabase() {
       topic_id INTEGER REFERENCES topics(id) ON DELETE SET NULL,
       front TEXT NOT NULL,
       back TEXT NOT NULL,
+      analogy TEXT,
       card_type TEXT DEFAULT 'definition',
       visual_reference TEXT,
       difficulty INTEGER DEFAULT 3,
@@ -92,6 +93,12 @@ export function initializeDatabase() {
   const cols = sqlite.prepare("PRAGMA table_info(flashcards)").all() as { name: string }[];
   if (!cols.some((c) => c.name === 'topic_id')) {
     sqlite.exec('ALTER TABLE flashcards ADD COLUMN topic_id INTEGER REFERENCES topics(id) ON DELETE SET NULL');
+  }
+
+  // Migration: add analogy column to existing flashcards table if missing
+  const cols2 = sqlite.prepare("PRAGMA table_info(flashcards)").all() as { name: string }[];
+  if (!cols2.some((c) => c.name === 'analogy')) {
+    sqlite.exec('ALTER TABLE flashcards ADD COLUMN analogy TEXT');
   }
 }
 
