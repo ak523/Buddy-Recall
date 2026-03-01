@@ -24,6 +24,7 @@ export const flashcards = sqliteTable('flashcards', {
   topicId: integer('topic_id'),
   front: text('front').notNull(),
   back: text('back').notNull(),
+  analogy: text('analogy'),
   cardType: text('card_type').default('definition'),
   visualReference: text('visual_reference'),
   difficulty: integer('difficulty').default(3),

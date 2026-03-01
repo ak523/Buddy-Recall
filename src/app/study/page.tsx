@@ -9,6 +9,7 @@ interface StudyCard {
   deckId: number;
   front: string;
   back: string;
+  analogy: string | null;
   cardType: string;
   difficulty: number;
   deckName: string;
@@ -132,6 +133,14 @@ function StudyContent() {
         <div className="text-xl font-bold text-center">
           <MathText text={flipped ? card.back : card.front} />
         </div>
+        {flipped && card.analogy && (
+          <div className="mt-6 mx-auto max-w-md bg-amber-50 border-4 border-amber-300 rounded-lg px-4 py-3 text-left">
+            <div className="font-bold text-amber-900 text-sm">
+              💡 <strong>Analogy:</strong>{' '}
+              <span className="font-medium"><MathText text={card.analogy} /></span>
+            </div>
+          </div>
+        )}
         <div className="text-center mt-8 text-sm font-bold text-gray-400">
           {flipped ? 'Click to hide answer' : 'Click to reveal answer'}
         </div>

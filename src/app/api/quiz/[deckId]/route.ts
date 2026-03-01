@@ -15,7 +15,7 @@ export async function GET(
     if (!deck) return NextResponse.json({ error: 'Deck not found' }, { status: 404 });
 
     const cards = await db
-      .select({ id: flashcards.id, front: flashcards.front, back: flashcards.back })
+      .select({ id: flashcards.id, front: flashcards.front, back: flashcards.back, analogy: flashcards.analogy })
       .from(flashcards)
       .where(eq(flashcards.deckId, id));
 

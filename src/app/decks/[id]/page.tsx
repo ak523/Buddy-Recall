@@ -9,6 +9,7 @@ interface Card {
   id: number;
   front: string;
   back: string;
+  analogy: string | null;
   cardType: string;
   difficulty: number;
   reviewCount: number;
@@ -34,6 +35,7 @@ export default function DeckDetailPage() {
   const [editingCard, setEditingCard] = useState<number | null>(null);
   const [editFront, setEditFront] = useState('');
   const [editBack, setEditBack] = useState('');
+  const [editAnalogy, setEditAnalogy] = useState('');
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [editingDeck, setEditingDeck] = useState(false);
   const [editDeckName, setEditDeckName] = useState('');
@@ -67,7 +69,7 @@ export default function DeckDetailPage() {
     const res = await fetch(`/api/cards/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ front: editFront, back: editBack }),
+      body: JSON.stringify({ front: editFront, back: editBack, analogy: editAnalogy || null }),
     });
     const updated = await res.json();
     setCards((prev) => prev.map((c) => (c.id === id ? { ...c, ...updated } : c)));
@@ -237,6 +239,14 @@ export default function DeckDetailPage() {
                     className="w-full border-2 border-black p-2 font-medium resize-none focus:outline-none"
                     rows={3}
                   />
+                  <label className="block font-black text-sm">ANALOGY (optional)</label>
+                  <textarea
+                    value={editAnalogy}
+                    onChange={(e) => setEditAnalogy(e.target.value)}
+                    className="w-full border-2 border-black p-2 font-medium resize-none focus:outline-none"
+                    rows={2}
+                    placeholder="Add an analogy to help with memory retention..."
+                  />
                   <div className="flex gap-2">
                     <button
                       onClick={() => saveCardEdit(card.id)}
@@ -299,6 +309,11 @@ export default function DeckDetailPage() {
                         {expandedCard === card.id && (
                           <div className="mt-2 pt-2 border-t-2 border-dashed border-gray-300 text-sm text-gray-700">
                             <MathText text={card.back} />
+                            {card.analogy && (
+                              <div className="mt-2 bg-amber-50 border-2 border-amber-300 rounded px-3 py-2 text-amber-900">
+                                💡 <strong>Analogy:</strong> <MathText text={card.analogy} />
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -311,6 +326,7 @@ export default function DeckDetailPage() {
                         setEditingCard(card.id);
                         setEditFront(card.front);
                         setEditBack(card.back);
+                        setEditAnalogy(card.analogy || '');
                       }}
                       className="border-r-2 border-black px-4 py-2 text-xs font-black hover:bg-yellow-100"
                     >
