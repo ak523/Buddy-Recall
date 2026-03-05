@@ -85,6 +85,13 @@ function StudyContent() {
     );
   }
 
+  const restartSession = () => {
+    setDone(false);
+    setCurrentIndex(0);
+    setFlipped(false);
+    setStartTime(Date.now());
+  };
+
   if (done) {
     return (
       <div className="text-center py-16 space-y-6">
@@ -92,6 +99,9 @@ function StudyContent() {
         <h2 className="text-3xl font-black">SESSION COMPLETE!</h2>
         <p className="font-bold text-gray-600">You reviewed {cards.length} cards. Great work!</p>
         <div className="flex gap-4 justify-center">
+          <button onClick={restartSession} className="border-4 border-black bg-yellow-400 px-6 py-3 font-black shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all">
+            RESTART SESSION
+          </button>
           <a href="/study" className="border-4 border-black bg-green-400 px-6 py-3 font-black shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-x-1 hover:-translate-y-1 transition-all">
             STUDY MORE
           </a>
